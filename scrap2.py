@@ -1,3 +1,4 @@
+#doesnt work for the very last value
 import re
 text = open("output.html")
 
@@ -15,6 +16,8 @@ chip = []
 room = []
 rank = []
 player = []
+left = 0
+badboys = []
 for line in text:
     i = line.rfind(">") + 1
     rez = line[i:]
@@ -54,7 +57,10 @@ for line in text:
                 flag_arr[current] = True
                 begin = True
     else:
-        if "<br></span></div>" in line:
+        if "ST. LOUIS PARK, MN, US" in line:
+            print("tt")
+        if "<br></span></div>" in line and line[line.rfind("left")+5:100+line[100:].find("px")] != left:
+            left = line[line.rfind("left")+5:100+line[100:].find("px")]
             flag_arr[current] = False
             if current == 4:
                 current = -1
@@ -67,12 +73,16 @@ for line in text:
             rank.append(rez)
         elif flag_arr[1]:
             player.append(rez)
+            if "DID NOT REPORT" in line:
+                badboys.append(len(player)-1)
         elif flag_arr[2]:
+            if len(city) in badboys:
+                city.append("")
             city.append(rez)
         elif flag_arr[3]:
             chip.append(rez)
         elif flag_arr[4]:
             room.append(rez)
 
-for r in range(400):
+for r in range(654):
     print(rank[r].strip()+"\t\t"+ player[r].strip() +"\t\t"+ city[r].strip() +"\t\t"+ chip[r].strip() +"\t\t\t"+ room[r].strip())
